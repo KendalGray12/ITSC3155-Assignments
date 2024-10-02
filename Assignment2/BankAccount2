@@ -1,1 +1,124 @@
+class BankAccount:
+    bank_title = "Wells Fargo"
+
+    def __init__(self, customer_name, current_balance, minimum_balance):
+        self.customer_name = customer_name
+        self.current_balance = current_balance
+        self.minimum_balance = minimum_balance
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.current_balance += amount
+            print(f"Deposited ${amount}. New balance is ${self.current_balance}.")
+        else:
+            print("Invalid deposit amount.")
+
+    def withdraw(self, amount):
+        if amount > 0:
+            if self.current_balance - amount >= self.minimum_balance:
+                self.current_balance -= amount
+                print(f"Withdrew ${amount}. New balance is ${self.current_balance}.")
+            else:
+                print("Not enough balance after withdrawal.")
+        else:
+            print("Invalid withdrawal amount.")
+
+    def print_customer_information(self):
+        print(f"Bank: {BankAccount.bank_title}")
+        print(f"Customer: {self.customer_name}")
+        print(f"Balance: ${self.current_balance}")
+        print(f"Minimum Balance: ${self.minimum_balance}")
+
+
+# Test
+account1 = BankAccount("Kendal Gray", 5000, 1000)
+account2 = BankAccount("Kenny Red", 4000, 500)
+
+# Deposits
+deposit_amount1 = int(input("Enter amount to deposit for Kendal: "))
+account1.deposit(deposit_amount1)
+
+deposit_amount2 = int(input("Enter amount to deposit for Kenny: "))
+account2.deposit(deposit_amount2)
+
+# Withdrawals
+withdraw_amount1 = int(input("Enter amount to withdraw for Kendal: "))
+account1.withdraw(withdraw_amount1)
+
+withdraw_amount2 = int(input("Enter amount to withdraw for Kenny: "))
+account2.withdraw(withdraw_amount2)  # This should fail if the amount is too high
+
+# Print customer information
+account1.print_customer_information()
+account2.print_customer_information()
+
+from bank_account import BankAccount
+
+class SavingsAccount(BankAccount):
+    def __init__(self, customer_name, current_balance, minimum_balance, account_number, routing_number, interest_rate):
+        super().__init__(customer_name, current_balance, minimum_balance, account_number, routing_number)
+        self.interest_rate = interest_rate
+
+    def apply_interest(self):
+        """Applies interest to the current balance."""
+        interest = self.current_balance * self.interest_rate
+        self.current_balance += interest
+        print(f"Applied interest of ${interest}. New balance is ${self.current_balance}.")
+
+from bank_account import BankAccount
+
+class CheckingAccount(BankAccount):
+    def __init__(self, customer_name, current_balance, minimum_balance, account_number, routing_number, transfer_limit):
+        super().__init__(customer_name, current_balance, minimum_balance, account_number, routing_number)
+        self.transfer_limit = transfer_limit
+
+    def transfer(self, amount, recipient_account):
+        """Transfers amount to another account if within the transfer limit."""
+        if amount > self.transfer_limit:
+            print(f"Cannot transfer ${amount}. Exceeds transfer limit of ${self.transfer_limit}.")
+        else:
+            if self.current_balance - amount >= self.minimum_balance:
+                self.current_balance -= amount
+                recipient_account.current_balance += amount
+                print(f"Transferred ${amount} to {recipient_account.customer_name}.")
+            else:
+                print("Not enough balance for transfer.")
+
+from savings_account import SavingsAccount
+from checking_account import CheckingAccount
+
+# Create SavingsAccount instances
+savings1 = SavingsAccount("Kendal Gray", 5000, 1000, "12345678", "87654321", 0.05)
+savings2 = SavingsAccount("Kenny Red", 4000, 500, "87654321", "12345678", 0.03)
+
+# Create CheckingAccount instances
+checking1 = CheckingAccount("John Brown", 3000, 500, "98765432", "23456789", 1000)
+checking2 = CheckingAccount("Joe Black", 2000, 300, "23456789", "98765432", 500)
+
+# Scenario 1: Deposits and Withdrawals
+print("\n-- Deposits and Withdrawals --")
+savings1.deposit(1000)
+savings1.withdraw(2000)
+checking1.deposit(500)
+checking1.withdraw(1000)
+
+# Scenario 2: Applying interest to savings accounts
+print("\n-- Applying Interest --")
+savings1.apply_interest()
+savings2.apply_interest()
+
+# Scenario 3: Transfers from checking account
+print("\n-- Transfers --")
+checking1.transfer(600, checking2)  # Transfer within the limit
+checking2.transfer(600, checking1)  # Exceeds transfer limit
+
+# Print customer information
+print("\n-- Customer Information --")
+savings1.print_customer_information()
+savings2.print_customer_information()
+checking1.print_customer_information()
+checking2.print_customer_information()
+
+
+
 
